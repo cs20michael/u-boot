@@ -1359,6 +1359,14 @@ static bool is_gpio_persist(struct udevice *dev, enum reset_type type, u8 bank)
 			return !((readl(base + NPCM7XX_RST_WD1RCR) & mask) >> offset);
 		case (WD2RST):
 			return !((readl(base + NPCM7XX_RST_WD2RCR) & mask) >> offset);
+		case (SWR1ST):
+			return !((readl(base + NPCM7XX_RST_SWRSTC1) & mask) >> offset);
+		case (SWR2ST):
+			return !((readl(base + NPCM7XX_RST_SWRSTC2) & mask) >> offset);
+		case (SWR3ST):
+			return !((readl(base + NPCM7XX_RST_SWRSTC3) & mask) >> offset);
+		case (SWR4ST):
+			return !((readl(base + NPCM7XX_RST_SWRSTC4) & mask) >> offset);
 		default:
 			return false;
 			break;
@@ -1378,11 +1386,19 @@ static int npcm7xx_gpio_reset_persist(struct udevice *dev, unsigned int banknum,
 		clrbits_le32(base + NPCM7XX_RST_WD1RCR, BIT(GPIOX_MODULE_RESET + banknum));
 		clrbits_le32(base + NPCM7XX_RST_WD2RCR, BIT(GPIOX_MODULE_RESET + banknum));
 		clrbits_le32(base + NPCM7XX_RST_CORSTC, BIT(GPIOX_MODULE_RESET + banknum));
+		clrbits_le32(base + NPCM7XX_RST_SWRSTC1, BIT(GPIOX_MODULE_RESET + banknum));
+		clrbits_le32(base + NPCM7XX_RST_SWRSTC2, BIT(GPIOX_MODULE_RESET + banknum));
+		clrbits_le32(base + NPCM7XX_RST_SWRSTC3, BIT(GPIOX_MODULE_RESET + banknum));
+		clrbits_le32(base + NPCM7XX_RST_SWRSTC4, BIT(GPIOX_MODULE_RESET + banknum));
 	} else {
 		setbits_le32(base + NPCM7XX_RST_WD0RCR, BIT(GPIOX_MODULE_RESET + banknum) | CA9C_MODULE_RESET);
 		setbits_le32(base + NPCM7XX_RST_WD1RCR, BIT(GPIOX_MODULE_RESET + banknum) | CA9C_MODULE_RESET);
 		setbits_le32(base + NPCM7XX_RST_WD2RCR, BIT(GPIOX_MODULE_RESET + banknum) | CA9C_MODULE_RESET);
 		setbits_le32(base + NPCM7XX_RST_CORSTC, BIT(GPIOX_MODULE_RESET + banknum) | CA9C_MODULE_RESET);
+		setbits_le32(base + NPCM7XX_RST_SWRSTC1, BIT(GPIOX_MODULE_RESET + banknum) | CA9C_MODULE_RESET);
+		setbits_le32(base + NPCM7XX_RST_SWRSTC2, BIT(GPIOX_MODULE_RESET + banknum) | CA9C_MODULE_RESET);
+		setbits_le32(base + NPCM7XX_RST_SWRSTC3, BIT(GPIOX_MODULE_RESET + banknum) | CA9C_MODULE_RESET);
+		setbits_le32(base + NPCM7XX_RST_SWRSTC4, BIT(GPIOX_MODULE_RESET + banknum) | CA9C_MODULE_RESET);
 	}
 
 	return 0;
