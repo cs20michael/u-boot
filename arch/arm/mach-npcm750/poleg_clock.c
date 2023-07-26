@@ -118,6 +118,34 @@ static int poleg_uart_init_clk(struct clk_ctl *uart_clk)
 	return 0;
 }
 
+static int poleg_uart_get_clk(struct clk_ctl *uart_clk)
+{
+	u32 clksel, div;
+	u32 clksrc;
+
+	clksel = (readl(&uart_clk->clksel) & GENMASK(9, 8)) >> 8;
+	switch (clksel) {
+	case 0:
+		clksrc = clk_get_pll_freq(uart_clk, PLL_0);
+		break;
+	case 1:
+		clksrc = clk_get_pll_freq(uart_clk, PLL_1);
+		break;
+	case 2:
+		clksrc = 25000000;
+		break;
+	case 3:
+		clksrc = clk_get_pll_freq(uart_clk, PLL_2) / 2;
+		break;
+	default:
+		return 0;
+	}
+
+	div = (readl(&uart_clk->clkdiv1) & GENMASK(20, 16)) >> 16;
+
+	return clksrc / (div + 1);
+}
+
 enum sd_num {
 	SD1_DEV,
 	SD2_DEV,
@@ -252,6 +280,8 @@ static ulong poleg_get_rate(struct clk *clk)
 		return poleg_get_cpu_freq(priv->regs) /
 			poleg_get_pll0_apb_divisor(priv->regs, APB5);
 		break;
+	case CLK_UART:
+		return poleg_uart_get_clk(priv->regs);
 	}
 
 	return 0;

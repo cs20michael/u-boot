@@ -71,7 +71,7 @@
 #define PHYS_SDRAM_1			        CONFIG_SYS_SDRAM_BASE
 
 #define CONFIG_BAUDRATE                 115200
-#define CONFIG_SYS_BAUDRATE_TABLE       {115200, 57600, 38400}
+#define CONFIG_SYS_BAUDRATE_TABLE	{ 57600, 115200, 230400, 460800 }
 
 #define CONFIG_SYS_HZ                   1000
 

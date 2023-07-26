@@ -88,6 +88,9 @@ static int npcm750_serial_setbrg(struct udevice *dev, int baudrate)
 	s32 divisor;
 	u32 uart_clock;
 
+#ifdef CONFIG_SYS_SKIP_UART_INIT
+	return 0;
+#endif
 	/* 24MHz = 960MHz(PLL2) / 2 / (19 + 1) */
 	uart_clock = plat->uart_clk;
 
@@ -138,8 +141,10 @@ static int npcm750_serial_probe(struct udevice *dev)
 
 	clk.id = clkd[1];
 
+#ifndef CONFIG_SYS_SKIP_UART_INIT
 	/* To set UART clock source and divider */
 	ret = clk_set_rate(&clk, plat->uart_clk);
+#endif
 	clk_free(&clk);
 	if (ret < 0)
 		return ret;
